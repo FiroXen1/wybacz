@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dla Ciebie...</title>
+    <style>
+        /* --- STYLIZACJA (WYGLĄD STRONY) --- */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fdf5f6;
+            color: #4a4a4a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.8s ease-in-out;
+            width: 90%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #screen1 { display: block; }
+
+        button {
+            background-color: #ff4f70;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #ff2d56;
+            transform: scale(1.05);
+        }
+
+        /* --- STYLIZACJA EKRANU 3 (MENU Z ANIMACJAMI) --- */
+        .hearts-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .heart {
+            position: absolute;
+            bottom: -50px;
+            color: rgba(255, 79, 112, 0.2);
+            font-size: 20px;
+            animation: rise 5s linear infinite;
+        }
+
+        @keyframes rise {
+            0% { bottom: -50px; transform: translateX(0); opacity: 0.7; }
+            100% { bottom: 110%; transform: translateX(100px); opacity: 0; }
+        }
+
+        .btn-menu {
+            display: block;
+            width: 80%;
+            max-width: 350px;
+            margin: 15px auto;
+            background-color: #f1f2f6;
+            color: #2f3542;
+            border: 2px solid transparent;
+        }
+
+        .btn-menu:hover {
+            background-color: #ffedf1;
+            color: #2f3542;
+            border-color: #ffbed0;
+        }
+
+        .btn-menu.special {
+            background-color: #ff4f70;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .btn-menu.special:hover {
+            background-color: #ff2d56;
+            border-color: #ff4f70;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 79, 112, 0.6); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 79, 112, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 79, 112, 0); }
+        }
+
+        /* --- POZOSTAŁA STYLIZACJA --- */
+        .btn-back {
+            background-color: #7bed9f;
+            color: #2f3542;
+            margin-top: 40px;
+            position: relative;
+            z-index: 2; /* Guzik zawsze na wierzchu */
+        }
+        
+        .btn-back:hover {
+            background-color: #2ed573;
+        }
+
+        h3 {
+            color: #ff4f70;
+            border-bottom: 2px dashed #ffeaa7;
+            padding-bottom: 5px;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .content-box {
+            text-align: left;
+            background: #fcfcfc;
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid #f1f2f6;
+        }
+
+        .content-box p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+
+        .apology-text {
+            font-size: 1.2em;
+            line-height: 1.6;
+            font-style: italic;
+            color: #2f3542;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 5px solid #ff4f70;
+        }
+
+        /* Lista 100 powodów */
+        .reasons-list {
+            text-align: left;
+            padding-left: 20px;
+            line-height: 1.6;
+            font-size: 1.05em;
+        }
+        
+        .reasons-list li {
+            margin-bottom: 10px;
+            color: #2f3542;
+        }
+
+        /* Galeria / Karty ze zdjęciami */
+        .photo-gallery {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .photo-card {
+            background: #fff;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .photo-card img, .photo-card .img-placeholder {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a4b0be;
+        }
+
+        .photo-card h3 {
+            text-align: center;
+            border-bottom: none;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        .photo-card p {
+            font-size: 0.95em;
+            color: #57606f;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-style: italic;
+        }
+
+        /* --- STYLIZACJA EKRANU ZAKOŃCZENIA --- */
+        .ending-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.25; /* Przezroczystość zdjęcia w tle (0.25 to 25%) */
+        }
+
+        .ending-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .ending-content {
+            position: relative;
+            z-index: 1; /* Elementy przednie nad tłem */
+            padding-top: 20px;
+        }
+
+        .ending-title {
+            color: #ff4f70;
+            font-size: 2.5em;
+            margin-top: 30px;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.9); /* Biały cień, żeby tekst był czytelny na zdjęciu */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- EKRAN 1: START -->
+    <div id="screen1" class="screen">
+        <h1 style="font-size: 3em; color: #ff4f70;">Hej...</h1>
+        <p>Mam Ci coś ważnego do powiedzenia.</p>
+        <button onclick="goToScreen('screen2')">Przepraszam</button>
+    </div>
+
+    <!-- EKRAN 2: PRZEPROSINY -->
+    <div id="screen2" class="screen">
+        <h2>Dla Ciebie</h2>
+        <div class="apology-text">
+            Zanim przejdziesz dalej, chcę Cię z całego serca przeprosić. Wiem, że Cię zawiodłem i brak mi słów, żeby opisać, jak bardzo mi z tego powodu źle. Zależy mi na Tobie bardzo, i fakt że przeze mnie jesteś smutna, po prostu mnie dobija. Rozumiem Twoje emocje. Obiecuję, że wyciągnę z tego lekcję. Wybacz mi, proszę.
+        </div>
+        <button onclick="goToScreen('screen3')">Przejdź dalej</button>
+    </div>
+
+    <!-- EKRAN 3: MENU GŁÓWNE (Z ANIMACJAMI) -->
+    <div id="screen3" class="screen active-menu">
+        <div class="hearts-container" id="heartsContainer"></div>
+
+        <h2>Chcę żebyś wiedziała, że...</h2>
+        <p style="margin-bottom: 30px; color: #747d8c;">(Wybierz, co chcesz przeczytać)</p>
+        
+        <button class="btn-menu special" onclick="goToScreen('screen4')">Dlaczego właśnie Ty? ❤️</button>
+        <button class="btn-menu" onclick="goToScreen('screen5')">Ty i Ja 👩‍❤️‍👨</button>
+        <button class="btn-menu" onclick="goToScreen('screen6')">Wyjaśnienia 💭</button>
+        <button class="btn-menu" style="background-color: #7bed9f; color: #2f3542; margin-top: 30px;" onclick="goToScreen('screen7')">Zakończenie 🐾</button>
+    </div>
+
+    <!-- EKRAN 4: DLACZEGO WŁAŚNIE TY -->
+    <div id="screen4" class="screen">
+        <h2 style="color: #ff4f70;">Dlaczego właśnie Ty?</h2>
+        <div class="content-box">
+            
+            <p style="font-style: italic; color: #747d8c; margin-bottom: 20px; font-size: 1.1em; text-align: center;">
+                Wiem że może być ci ciężko w to uwierzyć po ostatniej sytuacji ale naprawdę wszystko mówię szczerze.
+            </p>
+
+            <p style="text-align: center; font-size: 1.2em; color: #ff4f70;">
+                <strong>Oto krótka lista rzeczy, przez które nie mogę przestać o Tobie myśleć:</strong>
+            </p>
+
+            <ol class="reasons-list">
+                <li>Bo masz odwagę, by być sobą.</li>
+                <li>Bo twój uśmiech powoduje, że sam jestem szczęśliwy i nie chcę, żeby znikał z twarzy.</li>
+                <li>Za sposób, w jaki się do mnie przytulasz.</li>
+                <li>Bo przy Tobie czuję się bezpieczny. Wiem, że tego nie widać i nie do końca się otworzyłem, ale czuję, że moje wewnętrzne dziecko jest bezpieczne.</li>
+                <li>Bo umiesz słuchać, nawet gdy mówię o niczym.</li>
+                <li>Bo masz świetne poczucie humoru.</li>
+                <li>Bo dajesz mi wsparcie w trudnych chwilach.</li>
+                <li>Bo masz najpiękniejsze oczy na świecie, gdy im się przyglądam widzę duszę tak głęboką i piękną, że aż brakuje mi słów. Widzę w nich spokój i największą namiętność jednocześnie.</li>
+                <li>Bo twoja troska o innych jest niezwykła.</li>
+                <li>Za nasze rozmowy do późnej nocy.</li>
+                <li>Bo wierzysz w moje marzenia.</li>
+                <li>Bo umiesz stawiać czoła przeciwnościom.</li>
+                <li>Bo jesteś moją najlepszą przyjaciółką.</li>
+                <li>Bo jesteś uczciwa.</li>
+                <li>Bo sprawiasz, że czuję się wyjątkowy.</li>
+                <li>Za twoje małe gesty miłości.</li>
+                <li>Bo umiesz słuchać bez oceniania.</li>
+                <li>Bo jesteś otwarta na nowe doświadczenia.</li>
+                <li>Za cierpliwość.</li>
+                <li>Kiedy śmiejesz się z całego serca.</li>
+                <li>Bo umiesz czerpać z życia pełnymi garściami.</li>
+                <li>Bo jesteś inteligentna.</li>
+                <li>Bo jesteś moim spokojem w chaosie.</li>
+                <li>Za zdolność do wybaczania, która jest godna podziwu.</li>
+                <li>Bo masz w sobie ducha przygody.</li>
+                <li>Bo twoja miłość do zwierząt rozgrzewa moje serce.</li>
+                <li>Twoja wytrwałość w dążeniu do celów jest inspirująca.</li>
+                <li>Bo wiesz, jak celebrować małe sukcesy.</li>
+                <li>Bo twoje zrozumienie i empatia są bezcenne.</li>
+                <li>Bo jesteś odpowiedzialna.</li>
+                <li>Bo jesteś moją inspiracją do bycia lepszą osobą.</li>
+                <li>Bo twoja miłość do muzyki sprawia, że ja jestem pełen radości.</li>
+                <li>Bo twoje zaangażowanie w relacje jest wzorem do naśladowania.</li>
+                <li>Bo sprawiasz, że czuję się kochany.</li>
+                <li>Bo zawsze jesteś gotowa do pomocy.</li>
+                <li>Za każdy wspólny posiłek.</li>
+                <li>Za twoją niezależność.</li>
+                <li>Za wewnętrzną siłę.</li>
+                <li>Bo jesteś najlepszym towarzyszem podróży.</li>
+                <li>Bo umiesz cieszyć się z małych rzeczy.</li>
+                <li>Bo umiesz szukać pozytywów w negatywnych sytuacjach.</li>
+                <li>Za sposób, w jaki potrafisz zmotywować mnie do działania.</li>
+                <li>Bo sprawiasz, że czuję się ważny.</li>
+                <li>Bo rozumiesz najbardziej skomplikowane emocje bez słów.</li>
+                <li>Bo inspirujesz mnie do zdrowego stylu życia.</li>
+                <li>Bo zawsze we mnie wierzysz.</li>
+                <li>Za twoje poczucie estetyki.</li>
+                <li>Za sposób, w jaki umiesz radzić sobie z trudnymi emocjami.</li>
+                <li>Bo umiesz sięgać po kompromisy.</li>
+                <li>Bo interesujesz się moimi hobby, nawet jeśli nie są one dla Ciebie.</li>
+                <li>Za wszystkie głębokie rozmowy.</li>
+                <li>Bo zawsze znajdujesz czas dla nas, niezależnie od tego, jak jesteś zajęta.</li>
+                <li>Bo dajesz mi siłę.</li>
+                <li>Za to, że się różnimy i uczymy od siebie nawzajem.</li>
+                <li>Bo masz pasję do nauki nowych rzeczy.</li>
+                <li>Za niezwykłą lojalność.</li>
+                <li>Bo uczysz mnie żyć bez pośpiechu.</li>
+                <li>Bo potrafisz sprawić, że każda chwila jest wyjątkowa.</li>
+                <li>Bo potrafisz rozwiązywać każdy konflikt.</li>
+                <li>Za twoją zmysłowość.</li>
+                <li>Za sposób, w jaki dbasz o nasze wspólne wspomnienia.</li>
+                <li>Twoja umiejętność dostrzegania piękna w codzienności.</li>
+                <li>Bo potrafisz mnie rozbawić, kiedy najbardziej tego potrzebuję.</li>
+                <li>Bo wiesz, jak zachować spokój, kiedy ja tracę głowę.</li>
+                <li>Bo jesteś otwarta na zmiany.</li>
+                <li>Bo potrafisz kochać moje niedoskonałości.</li>
+                <li>Za twoją determinację w dążeniu do celów.</li>
+                <li>Bo twój głos działa na mnie uspokajająco.</li>
+                <li>Za sposób, w jaki patrzysz na świat.</li>
+                <li>Bo potrafisz być zarówno przyjaciółką, jak i partnerką.</li>
+                <li>Bo z tobą życie jest pełne kolorów.</li>
+                <li>Bo szanujesz moją przestrzeń osobistą, a jednocześnie jesteś blisko.</li>
+                <li>Bo uwielbiam sposób, w jaki czasem uroczo marszczysz nos, gdy nad czymś myślisz.</li>
+                <li>Bo planujemy wspólne życie we dwoje.</li>
+                <li>Bo masz mnóstwo pasji i chętnie je rozwijasz.</li>
+                <li>Bo sprawiasz, że wszyscy wokół czują się jak w rodzinie.</li>
+                <li>Za twoją niezwykłą ciekawość świata.</li>
+                <li>Bo uczysz mnie, jak ważne jest, by być tu i teraz, ciesząc się teraźniejszością.</li>
+                <li>Bo masz niezwykły styl i gust.</li>
+                <li>Za kształt twoich ust i sposób, w jaki układają się, gdy się śmiejesz lub mówisz.</li>
+                <li>Sposób, w jaki twoje włosy opadają na twarz i to, jak uroczo je odgarniasz.</li>
+                <li>Rysy twojej twarzy, które mają w sobie coś tak unikalnego, że mógłbym przyglądać się im godzinami.</li>
+                <li>Twój naturalny rumieniec, który pojawia się na policzkach, gdy się uśmiechasz lub delikatnie zawstydzasz.</li>
+                <li>Gładkość twojej skóry, która sprawia, że każdy dotyk jest uzależniający.</li>
+                <li>Linia twojej szyi i karku, która z jakiegoś powodu działa na mnie niezwykle zmysłowo.</li>
+                <li>Twoja talia i to, jak idealnie wpasowuje się w moje ramiona, gdy cię obejmuję.</li>
+                <li>Zarys twoich ramion i obojczyków, które wyglądają niezwykle pociągająco w każdym świetle.</li>
+                <li>Kształt twoich dłoni i to, jak drobne i delikatne wydają się, gdy ich dotykam.</li>
+                <li>Twoja naturalna gracja, z jaką się poruszasz, niezależnie od tego, co robisz.</li>
+                <li>Sposób, w jaki uroczo marszczysz brwi, gdy jesteś na czymś w pełni skupiona.</li>
+                <li>Twoja poranna, naturalna wersja, kiedy dopiero się budzisz, z potarganymi włosami i zaspana wtedy podobasz mi się najbardziej.</li>
+                <li>Twój wzrost, który sprawia, że idealnie, co do milimetra, wpasowujesz się w moje ramiona, zupełnie jakbyś była stworzona specjalnie po to, żebym cię przytulał.</li>
+                <li>To, że wszystko, co ty nazywasz niedoskonałością, dla mnie jest sztuką. Mógłbym godzinami wodzić palcami po śladach na twojej skórze, bo przypominają mi, że jesteś w stu procentach moja i prawdziwa.</li>
+                <li>Za to, w jaki sposób na mnie patrzysz, kiedy myślisz, że tego nie widzę.</li>
+                <li>Twój zapach, który jest moim ulubionym na świecie i od razu kojarzy mi się z bezpieczeństwem i domem.</li>
+                <li>Za to, w jaki sposób uroczo wzdychasz przez sen i podświadomie szukasz mnie w nocy, żeby się przytulić.</li>
+                <li>Sposób, w jaki brzmi Twoje imię, gdy po prostu o Tobie myślę – nic nie wywołuje we mnie takiego ciepła.</li>
+                <li>Za to, że potrafisz czytać ze mnie jak z otwartej książki, nawet wtedy, kiedy brakuje mi słów, żeby opisać, co czuję.</li>
+                <li>Bo to, jak Twoja dłoń idealnie pasuje do mojej, nie może być przypadkiem.</li>
+                <li>Bo mimo wszystkich moich błędów i potknięć, to właśnie z Tobą chcę budować przyszłość, a Ty dajesz mi powód, by każdego dnia starać się być dla Ciebie lepszym mężczyzną.</li>
+            </ol>
+
+        </div>
+        <button class="btn-back" onclick="goToScreen('screen3')">Wróć do Menu</button>
+    </div>
+
+    <!-- EKRAN 5: TY I JA (3 ZDJĘCIA) -->
+    <div id="screen5" class="screen">
+        <h2 style="color: #ff4f70;">Ty i Ja</h2>
+        <div class="content-box">
+            <p style="text-align: center; color: #747d8c; font-style: italic; margin-bottom: 20px;">Trzy zdjęcia, które mówią więcej niż tysiąc słów...</p>
+            
+            <div class="photo-gallery">
+                
+                <div class="photo-card">
+                    <img src="my.jpg">
+                    <!-- Użyj: <img src="nasze-wspolne.jpg"> -->
+                    <h3>MY</h3>
+                    <p>"[Często wracam do tego naszego wspólnego zdjęcia, jest że to moje ulubione. Nigdy z nikim nie miałem takiego ujęcia, które tak by mi się podobało. 
+                    Ale prawda jest taka, że to nie samo zdjęcie jest takie wyjątkowe, jest idealne tylko dlatego, że to ty na nim jesteś.]"</p>
+                </div>
+
+                <div class="photo-card">
+                    <img src="ty.jpg">
+                    <!-- Użyj: <img src="moje-zdjecie.jpg"> -->
+                    <h3>TY</h3>
+                    <p>"[Patrzę na to zdjęcie i widzę ten twój absolutnie najpiękniejszy uśmiech. On daje mi taką siłę, jakiej tak bardzo potrzebuję, kiedy zderzam się z moją rzeczywistością. Chciałbym go widzieć bez przerwy, cały czas. To jest mój najważniejszy cel 
+                   widzieć cię zawsze tak promienną i szczerze szczęśliwą, jak tutaj. Jesteś najwspanialsza]"</p>
+                </div>
+
+                <div class="photo-card">
+                    <img src="ja.jpg">
+                    <!-- Użyj: <img src="jej-zdjecie.jpg"> -->
+                    <h3>TY</h3>
+                    <p>"[[a ja to co stary Brzydki chuj idota nie wiem co ty we mnie widzisz ale jestem przy tobie bardzo szczęsliwy i zrobie wszystko zeby naprawic nasza relacje"]"</p>
+                </div>
+
+            </div>
+        </div>
+        <button class="btn-back" onclick="goToScreen('screen3')">Wróć do Menu</button>
+    </div>
+
+    <!-- EKRAN 6: WYJAŚNIENIA -->
+    <div id="screen6" class="screen">
+        <h2 style="color: #ff4f70;">Wyjaśnienia</h2>
+        <div class="content-box">
+            <p>Muszę ci o czymś opowiedzieć, żebyś lepiej rozumiała, co się we mnie czasem dzieje. Kiedy się widzimy, jest wspaniale – mam motylki w brzuchu i wszystko wydaje się proste. Ale potem wracam do Gliwic, zderzam się z moją rzeczywistością i uderza we mnie cała lawina stresu. Studia, praca, milion spraw do ogarnięcia. To fizyczne i psychiczne wyczerpanie sprawia, że wpadam w dołki i zaczynam wątpić we wszystko, a najbardziej – w samego siebie. Niestety, moja własna frustracja i zmęczenie czasem odbijają się na tobie, a odległość, która nas dzieli, tylko potęguje te trudne emocje. Chcę, żebyś wiedziała, że to nie wynika z braku uczuć do ciebie, ale z tego, że bywam po prostu przytłoczony własnym życiem.</p>
+
+            <p>Chcę, żebyś wiedziała jedną najważniejszą rzecz: bardzo mi na tobie zależy i myślę o nas absolutnie przyszłościowo. To, co powiedziałem wczoraj, to była totalna głupota podyktowana natłokiem chwilowych, strasznie negatywnych emocji. Mój mózg był po prostu tak przeciążony stresem i zmęczeniem, że wyrzucił z siebie coś, co zupełnie mija się z prawdą. Prawda jest taka, że cały czas niesamowicie mi się podobasz i nic się w tej kwestii nie zmieniło.</p>
+
+            <p>Chcę ci też wytłumaczyć sytuacje, w których – jak to nazywamy – "myślę fiutem". Masz rację, czasem tak właśnie jest, ale dla mnie, w tym całym codziennym chaosie i wycieńczeniu, to jest jedna z głównych ucieczek od rzeczywistości. To taki moment i przestrzeń, w której na chwilę odpuszcza mi cały życiowy ciężar, nie czuję się źle sam ze sobą i mogę być wobec ciebie w stu procentach szczery ze swoimi pragnieniami. Skupienie się na tobie w ten sposób pozwala mi odciąć się od problemów i poczuć z tobą silną więź.</p>
+            
+            <p style="color: #ff4f70; font-weight: bold; margin-top: 30px; text-align: center;">
+                Zależy mi na tobie i moje chwile zwątpienia to walka z moją własną głową i stresem, a nie z tym, kim dla mnie jesteś.
+            </p>
+        </div>
+        <button class="btn-back" onclick="goToScreen('screen3')">Wróć do Menu</button>
+    </div>
+
+    <!-- EKRAN 7: ZAKOŃCZENIE -->
+    <div id="screen7" class="screen">
+        
+        <!-- Zdjęcie "na drugim planie" (Tło) -->
+        <div class="ending-bg">
+            <!-- Zamiast div poniżej, użyj: <img src="tlo-zakonczenie.jpg"> -->
+            <div style="width: 100%; height: 100%; background-color: #ffb8c6; display: flex; align-items: center; justify-content: center; color: #fff;">Zdjęcie w tle</div>
+    <img src="tlo-zakonczenie.jpg">
+        </div>
+
+        <!-- Zawartość właściwa -->
+        <div class="ending-content">
+            
+            <div class="photo-card" style="margin: 0 auto;">
+                <!-- Twoje zdjęcie (Na pierwszym planie) -->
+                <img src="piesek.jpg">
+                <!-- Zamiast linijki wyżej, użyj: <img src="piesek.jpg"> -->
+            </div>
+            
+            <h1 class="ending-title">Czy mogę zostać twoim pieskiem ?</h1>
+            
+        </div>
+        
+        <button class="btn-back" onclick="goToScreen('screen3')">Wróć do Menu</button>
+    </div>
+
+    <!-- --- SKRYPT (LOGIKA PRZEŁĄCZANIA I ANIMACJI) --- -->
+    <script>
+        function goToScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.style.display = 'none';
+            });
+            document.getElementById(screenId).style.display = 'block';
+            window.scrollTo(0,0);
+        }
+
+        function createHeart() {
+            const container = document.getElementById('heartsContainer');
+            if(!container) return; 
+
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️'; 
+
+            heart.style.left = Math.random() * 100 + '%'; 
+            heart.style.fontSize = Math.random() * 20 + 10 + 'px'; 
+            heart.style.animationDuration = Math.random() * 3 + 3 + 's'; 
+            heart.style.opacity = Math.random() * 0.5 + 0.1; 
+
+            container.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 6000); 
+        }
+
+        setInterval(createHeart, 300);
+    </script>
+
+</body>
+</html>
